@@ -6,10 +6,16 @@ type Production struct {
 	code string
 }
 
-var strtbl map[string]int
+var MINTOKEN int
+var MAXTOKEN int
+var literalSet map[string]int
+var tokenSet map[string]int
+var symbolSet map[string]int
+
+var prods []Production
+
 var firsts map[int]int
 var follows map[int]int
-var prods map[int][]Production
 
 // header info variables
 var packagename string

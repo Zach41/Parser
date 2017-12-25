@@ -4,7 +4,7 @@ import (
 	"log"
 )
 
-const Debug = false
+const Debug = true
 
 func parserLog(format string, v ...interface{}) {
 	if Debug {

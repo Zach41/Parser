@@ -10,6 +10,7 @@ const (
 	emptyTok = iota // not used
 	nonterm
 	term
+	literal
 	newline
 	begindef
 	enddef
@@ -77,6 +78,10 @@ Omitspace: // omit spaces
 
 Loop:
 	for {
+		if self.index >= len(self.content) {
+			break Loop
+		}
+
 		r, l := utf8.DecodeRune(self.content[self.index:])
 		if r == utf8.RuneError {
 			err = errors.New("Invalid utf8 encoding")
@@ -108,6 +113,8 @@ Loop:
 				break Loop
 			case '%':
 				tokType = hfield
+			case '\'':
+				tokType = literal
 			default:
 				if unicode.IsUpper(r) {
 					tokType = nonterm

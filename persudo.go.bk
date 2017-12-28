@@ -1,0 +1,72 @@
+func word2idx(word string) int {
+	wordIdx := 1
+	if idx, b := yycharmap[word]; b {
+		wordIdx = idx
+	} else {
+		word = fmt.Sprintf("'%s'", word)
+		if idx, b := yycharmap[word]; b {
+			wordIdx = idx
+		} else {
+			fmt.Printf("Unrecognized token\n")
+			wordIdx = -1
+		}		
+	}
+	return wordIdx
+}
+
+func yyparser(nextWord func(bool, string, *yytype)) {
+	values := NewStack()
+	prodsStack := NewStack()
+	stack := newStack()
+	eof, word, yyval := nextWord()
+	if eof {
+		word = "$"
+	}
+	wordIdx := word2Idx(word)
+	if wordIdx < 0 {
+		return
+	}
+	stack.push(MAXTOKEN + 1)
+
+	Loop:
+	for !stack.empty() {
+		top := stack.pop()
+		if reflect.Typeof(top).Kind == reflect.Int {
+			prodIdx := top.(int)
+			// prod := findProd(prodIdx)
+			if yytable[yycharmap[prodIdx]][wordIdx] == -1 {
+				fmt.Println("Error Parsing")
+				return
+			}
+			// prodsStack.push(top.(int))
+			bodyIdxes := bodyOfIdx(top.(int))
+			for i := len(bodyIdxes) - 1; i>=0; i-- {
+				name := nextProd.body[i]
+				if yycharmap > MAXTOKEN {
+					stack.push(name2prod(name))
+				} else {
+					stack.push(name)
+				}
+			}
+		} else {
+			// token := top.(string)
+			tokenIdx := top.(int)
+			if tokenIdx < MINTOKEN {
+				if tokenIdx != wordIdx {
+					fmt.Println("Not Matching literal")
+					return
+				}
+			} else {
+				if tokenIdx != wordIdx {
+					fmt.Println("Not Matching terminal")
+					return
+				}
+				values.push(yyval)
+			}
+			eof, word, yyval = nextWord()
+			if eof {
+				word = "$"
+			}			
+		}
+	}
+}

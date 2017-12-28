@@ -4,32 +4,6 @@ import (
 	"testing"
 )
 
-func type2Str(ttype TokType) string {
-	switch ttype {
-	case emptyTok:
-		return "empty token"
-	case nonterm:
-		return "nonterm"
-	case newline:
-		return "newline"
-	case begindef:
-		return "begindef"
-	case enddef:
-		return "enddef"
-	case alternate:
-		return "alternate"
-	case code:
-		return "code"
-	case hfield:
-		return "header field"
-	case separate:
-		return "separate"
-	case other:
-		return "other token"
-	}
-	return ""
-}
-
 func checkWord(scanner *Scanner, t *testing.T, ttype TokType, text string) {
 	err, word := scanner.NextWord()
 	if err != nil || word.tokType != ttype || word.text != text {
